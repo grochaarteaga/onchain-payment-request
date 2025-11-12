@@ -10,9 +10,8 @@ async function main() {
   const PaymentRequest = await hre.ethers.getContractFactory("PaymentRequest");
   const paymentRequest = await PaymentRequest.deploy(tokenAddress);
 
-  await paymentRequest.deployed();
-
-  console.log("✅ PaymentRequest deployed to:", paymentRequest.address);
+  // In Ethers v6, deploy() already waits for deployment.
+  console.log("✅ PaymentRequest deployed to:", await paymentRequest.getAddress());
 }
 
 main().catch((error) => {
