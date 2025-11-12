@@ -1,22 +1,18 @@
 const hre = require("hardhat");
+require("dotenv").config();
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const tokenAddress = process.env.TOKEN_ADDRESS;
+  if (!tokenAddress) throw new Error("Missing TOKEN_ADDRESS in .env");
 
-  const lockedAmount = hre.ethers.parseEther("0.001");
+  console.log("Deploying PaymentRequest with token:", tokenAddress);
 
-  const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+  const PaymentRequest = await hre.ethers.getContractFactory("PaymentRequest");
+  const paymentRequest = await PaymentRequest.deploy(tokenAddress);
 
-  await lock.waitForDeployment();
+  await paymentRequest.deployed();
 
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  console.log("✅ PaymentRequest deployed to:", paymentRequest.address);
 }
 
 main().catch((error) => {
